@@ -884,6 +884,7 @@ SkinnedMeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -3033,6 +3034,7 @@ GameObject:
   - component: {fileID: 5239022028722733615}
   - component: {fileID: -978222684581408059}
   - component: {fileID: 8116048549342222817}
+  - component: {fileID: 3180440240951784000}
   m_Layer: 0
   m_Name: ControlledRobotPrefab
   m_TagString: Untagged
@@ -3082,6 +3084,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_SkeletonRoot: {fileID: 6956474774461679642}
+--- !u!114 &3180440240951784000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9146783492835766332}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba850aab6eb6c4fb9b4401a722c30d7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_InEditor: 0
+  m_PlayingAnimation: 0
+  m_RecordToAnimationClip: 0
 --- !u!1 &9158048282686067684
 GameObject:
   m_ObjectHideFlags: 0

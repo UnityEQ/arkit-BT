@@ -172,6 +172,7 @@ public class ARUXAnimationManager : MonoBehaviour
 
     void Start()
     {
+		ShowFindBody();
         m_StartColor = m_AlphaWhite;
         m_TargetColor = m_White;
     }

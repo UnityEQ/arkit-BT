@@ -8,14 +8,18 @@ public class JointHandler : MonoBehaviour
     [SerializeField]
     [Tooltip("Root joint at root of rig skeleton, should be named Root_1")]
     Transform m_SkeletonRoot;
-
     public Transform skeletonRoot
     {
         get => m_SkeletonRoot;
         set => m_SkeletonRoot = value;
     }
-    
-    public List<Transform> Joints { get; set; }
+    [SerializeField]
+	List<Transform> m_Joints;
+    public List<Transform> Joints 
+	{
+		get => m_Joints;
+		set => m_Joints = value; 
+	}
 
     void OnEnable()
     {

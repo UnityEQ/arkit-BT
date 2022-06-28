@@ -49,33 +49,40 @@ public class BodyPlayback : MonoBehaviour
         m_JointHandler = GetComponent<JointHandler>();
         m_JointHandler.GetJoints();
 
-        m_BodyRuntimeRecorder = FindObjectOfType<BodyRuntimeRecorder>();
-
-        // AR Playback
-        if (!m_InEditor)
-        {
-            m_JointPositions = m_BodyRuntimeRecorder.JointPositions;
-            m_JointRotations = m_BodyRuntimeRecorder.JointRotations;
-        }
-        // Editor processing, file playback
-        else
-        {
-            m_BodyEditorRecorder = GetComponent<BodyEditorRecorder>();
-            BodyFileReader reader = GetComponent<BodyFileReader>();
-            reader.ProcessFile();
-            m_JointPositions = reader.positionValues;
-            m_JointRotations = reader.rotationValues;
-
-            if (m_RecordToAnimationClip)
-            {
-                m_BodyEditorRecorder.RecordToggle();
-                m_PlayingAnimation = true;
-            }
-        }
+		#if UNITY_IOS
+        //m_BodyRuntimeRecorder = FindObjectOfType<BodyRuntimeRecorder>();
+        //m_JointPositions = m_BodyRuntimeRecorder.JointPositions;
+        //m_JointRotations = m_BodyRuntimeRecorder.JointRotations;
+		#endif
         
-        SetBodyStartPose();
+		#if UNITY_EDITOR
+        //m_BodyEditorRecorder = GetComponent<BodyEditorRecorder>();
+//        BodyFileReader reader = GetComponent<BodyFileReader>();
+//        reader.ProcessFile("BodyCaptureData");
+//        m_JointPositions = reader.positionValues;
+//        m_JointRotations = reader.rotationValues;
+//		SetBodyStartPose();
+		#endif
+        
+        //SetBodyStartPose();
     }
 
+	public void DoAnim(string animName)
+	{
+		m_PlayingAnimation = false;
+		m_JointIndex = 0;
+		BodyFileReader reader = GetComponent<BodyFileReader>();
+		reader.ProcessFile(animName);
+		m_JointPositions = reader.positionValues;
+		m_JointRotations = reader.rotationValues;
+		//m_PlayingAnimation = true;
+	}
+	
+	public void DoAnim2()
+	{
+		m_PlayingAnimation = false;
+	}
+	
     void Update()
     {
         LoopPlayback();
@@ -91,9 +98,10 @@ public class BodyPlayback : MonoBehaviour
                 {
                     // hip joint position adjustment to center around placed object
                     Vector3 m_JointPositionWorld = m_JointPositions[m_JointIndex] - m_JointPositions[0];
-
+					Quaternion m_JointRotationWorld = m_JointRotations[m_JointIndex] * Quaternion.Inverse(m_JointRotations[0]);
+					
                     m_JointHandler.Joints[0].transform.localPosition = m_JointPositionWorld;
-                    m_JointHandler.Joints[0].transform.localRotation = m_JointRotations[m_JointIndex];
+                    m_JointHandler.Joints[0].transform.localRotation = m_JointRotationWorld;
                 }
                 else
                 {
@@ -111,8 +119,8 @@ public class BodyPlayback : MonoBehaviour
                 m_JointIndex = 0;
                 if (m_InEditor && m_RecordToAnimationClip)
                 {
-                    m_PlayingAnimation = false;
-                    m_BodyEditorRecorder.RecordToggle();
+                    //m_PlayingAnimation = false;
+                    //m_BodyEditorRecorder.RecordToggle();
                 }
             }
         }
@@ -123,6 +131,7 @@ public class BodyPlayback : MonoBehaviour
         for (int i = 0; i < m_JointHandler.Joints.Count; i++)
         {
             m_JointHandler.Joints[i].transform.localRotation = m_JointRotations[i];
+			m_JointHandler.Joints[i].transform.localPosition = m_JointPositions[i];
         }
     }
 

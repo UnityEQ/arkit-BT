@@ -6,6 +6,9 @@ using UnityEngine.XR.ARFoundation;
 
 public class TrackingManager : MonoBehaviour
 {
+	public ARUXAnimationManager arux;
+	public UIManager uiManage;
+	
     public enum CurrentTrackingState
     {
         BodyTracking,
@@ -85,14 +88,29 @@ public class TrackingManager : MonoBehaviour
     
     bool m_FirstWorldTracking = true;
     */
+	
+	void Start()
+	{
+		//arux.FadeOffCurrentUI();
+	}
     
     public void SwitchToWorldTracking()
     {
+		arux.FadeOffCurrentUI();
+		arux.ShowTapToPlace();
+		//arux.FadeOffCurrentUI();
+		//uiManage.m_FadedOff = true;
+        //uiManage.m_AnimationManager.FadeOffCurrentUI();
         SwitchTracking(CurrentTrackingState.WorldTracking);
     }
 
     public void SwitchToBodyTracking()
     {
+		arux.FadeOffCurrentUI();
+		arux.ShowFindBody();
+		//arux.FadeOffCurrentUI();
+		//uiManage.m_FadedOff = true;
+        //uiManage.m_AnimationManager.FadeOffCurrentUI();
         SwitchTracking(CurrentTrackingState.BodyTracking);
     }
 
@@ -104,8 +122,8 @@ public class TrackingManager : MonoBehaviour
             m_PlaneManager.SetTrackablesActive(false);
             m_PlaneManager.enabled = false;
             
-            m_PointCloudManager.SetTrackablesActive(false);
-            m_PointCloudManager.enabled = false;
+            //m_PointCloudManager.SetTrackablesActive(false);
+            //m_PointCloudManager.enabled = false;
 
             m_RaycastManager.enabled = false;
             m_PlaceObjectsOnPlane.enabled = false;
@@ -129,14 +147,13 @@ public class TrackingManager : MonoBehaviour
             m_PlaneManager.enabled = true;
             m_PlaneManager.SetTrackablesActive(true);
             
-            m_PointCloudManager.enabled = true;
-            m_PointCloudManager.SetTrackablesActive(true);
+            //m_PointCloudManager.enabled = true;
+            //m_PointCloudManager.SetTrackablesActive(true);
             
             m_RaycastManager.enabled = true;
             m_PlaceObjectsOnPlane.enabled = true;
             m_TrackingState = CurrentTrackingState.WorldTracking;
             
-            Debug.Log("thing");
 
             // show instructional UI is enabling world tracking for the first time
             /*

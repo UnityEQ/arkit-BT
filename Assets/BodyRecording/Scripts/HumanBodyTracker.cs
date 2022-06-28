@@ -6,6 +6,7 @@ using UnityEngine.XR.ARSubsystems;
 
 public class HumanBodyTracker : MonoBehaviour
 {
+	public ARUXAnimationManager m_AnimationManager;
     [SerializeField]
     [Tooltip("The Skeleton prefab to be controlled.")]
     GameObject m_SkeletonPrefab;
@@ -59,7 +60,7 @@ public class HumanBodyTracker : MonoBehaviour
                 boneController = newSkeletonGO.GetComponent<BoneController>();
                 m_SkeletonTracker.Add(humanBody.trackableId, boneController);
             }
-
+			m_AnimationManager.FadeOffCurrentUI();
             boneController.InitializeSkeletonJoints();
             boneController.ApplyBodyPose(humanBody);
         }

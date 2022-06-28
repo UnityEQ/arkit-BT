@@ -2,12 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
+using System.IO;
 
 public class BodyFileReader : MonoBehaviour
 {
     [SerializeField]
     [Tooltip("Path to folder that contains the BodyCaptureData.txt, must be in the Project's Asset folder")]
-    string m_CapturesFolderPath = "/Assets/BodyRecording/Captures/";
+    string m_CapturesFolderPath = "/BodyRecording/Captures/";
     
     public string capturesFolderPath
     {
@@ -36,19 +38,60 @@ public class BodyFileReader : MonoBehaviour
     }
 
     BodyRuntimeRecorder m_BodyRuntimeRecorder;
-    List<Vector3> m_PositionValues = new List<Vector3>();
-    List<Quaternion> m_RotationValues = new List<Quaternion>();
+    public List<Vector3> m_PositionValues = new List<Vector3>();
+    public List<Quaternion> m_RotationValues = new List<Quaternion>();
     
     public List<Vector3> positionValues => m_PositionValues;
     public List<Quaternion> rotationValues => m_RotationValues;
-    
-    public void ProcessFile()
-    {
+	public string[] levelsInfo;
+    public WWW wwwdata;
+	
+	public System.IO.StreamReader file;
+	
+
+IEnumerator MyCoroutine(string sURL)
+{
+    wwwdata = new WWW(sURL);
+#if UNITY_EDITOR
+    while(!wwwdata.isDone){}
+#elif UNITY_IOS
+    while(!wwwdata.isDone){}
+#elif UNITY_WEBGL
+	yield return wwwdata;
+#endif 
+	#if UNITY_IOS
+	File.WriteAllText(Application.persistentDataPath + "/BodyCaptureData.txt",wwwdata.text);
+	#endif
+	#if UNITY_WEBGL && !UNITY_EDITOR
+	File.WriteAllText(Application.persistentDataPath + "/BodyCaptureData.txt",wwwdata.text);
+	//Application.ExternalCall("syncfs", false);
+	#endif
+	#if UNITY_EDITOR
+	File.WriteAllText(Application.dataPath + m_CapturesFolderPath+"/BodyCaptureData.txt",wwwdata.text);
+	#endif
+	DoThings();
+    yield return 0;
+}
+
+	public void Start()
+	{
+	}
+	
+	public void DoThings()
+	{
         string line;
-        System.IO.StreamReader file = new System.IO.StreamReader(Application.dataPath + m_CapturesFolderPath+m_FileName+m_PostFilePath+".txt"); //load text file with data
+		#if UNITY_IOS
+        file = new System.IO.StreamReader(Application.persistentDataPath + "/BodyCaptureData.txt"); //load text file with data
+		#endif
+		#if UNITY_WEBGL
+        file = new System.IO.StreamReader(Application.persistentDataPath + "/BodyCaptureData.txt"); //load text file with data
+		#endif
+		#if UNITY_EDITOR
+		file = new System.IO.StreamReader(Application.dataPath + m_CapturesFolderPath+ "/BodyCaptureData.txt"); //load text file with data
+		#endif
         while ((line = file.ReadLine()) != null)
         { //while text exists.. repeat
-
+			//Debug.Log("LINE: " + line);
             char[] delimiterChar = { ')' };//variable separation
             string[] split = line.Split(delimiterChar, StringSplitOptions.None); //split vector3 and quat into split[0] and split[1]
 
@@ -66,5 +109,14 @@ public class BodyFileReader : MonoBehaviour
             m_RotationValues.Add(newROT);
         }
         file.Close();
-    }
+		BodyPlayback playback = GetComponent<BodyPlayback>();
+		playback.playingAnimation = true;
+	}
+	
+    public void ProcessFile(string animName)
+    {
+		m_PositionValues.Clear();
+		m_RotationValues.Clear();
+		StartCoroutine(MyCoroutine("https://joinkle.com/anims/" + animName + ".txt"));
+	}
 }

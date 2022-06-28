@@ -17,6 +17,7 @@ public struct UXHandle
 
 public class UIManager : MonoBehaviour
 {
+	public BodyRuntimeRecorder bodyRecorder;
     [SerializeField]
     bool m_StartWithInstructionalUI = true;
 
@@ -165,7 +166,7 @@ public class UIManager : MonoBehaviour
     }
 
     [SerializeField]
-    ARUXAnimationManager m_AnimationManager;
+    public ARUXAnimationManager m_AnimationManager;
 
     public ARUXAnimationManager animationManager
     {
@@ -173,25 +174,25 @@ public class UIManager : MonoBehaviour
         set => m_AnimationManager = value;
     }
 
-    bool m_FadedOff = false;
+    public bool m_FadedOff = false;
     
     void OnEnable()
     {
         ARUXAnimationManager.onFadeOffComplete += FadeComplete;
 
-        PlaceObjectsOnPlane.onPlacedObject += () => m_PlacedObject = true;
+		PlaceObjectsOnPlane.onPlacedObject += () => m_PlacedObject = true;
 
         GetManagers();
         m_UXOrderedQueue = new Queue<UXHandle>();
 
         if (m_StartWithInstructionalUI)
         {
-            m_UXOrderedQueue.Enqueue(new UXHandle(m_InstructionalUI, m_InstructionalGoal));
+            //m_UXOrderedQueue.Enqueue(new UXHandle(m_InstructionalUI, m_InstructionalGoal));
         }
 
         if (m_ShowSecondaryInstructionalUI)
         {
-            m_UXOrderedQueue.Enqueue(new UXHandle(m_SecondaryInstructionUI, m_SecondaryGoal));
+            //m_UXOrderedQueue.Enqueue(new UXHandle(m_SecondaryInstructionUI, m_SecondaryGoal));
         }
     }
 
@@ -202,31 +203,35 @@ public class UIManager : MonoBehaviour
 
     void Update()
     {
-        if (m_UXOrderedQueue.Count > 0 && !m_ProcessingInstructions)
-        {
+		//if(m_BodyManager.trackables.count > 0)
+		//{
+		//	m_AnimationManager.FadeOffCurrentUI();
+		//}
+        //if (m_UXOrderedQueue.Count > 0 && !m_ProcessingInstructions)
+        //{
             // pop off
-            m_CurrentHandle = m_UXOrderedQueue.Dequeue();
+            //m_CurrentHandle = m_UXOrderedQueue.Dequeue();
 
             // fade on
-            FadeOnInstructionalUI(m_CurrentHandle.InstructionalUI);
-            m_GoalReached = GetGoal(m_CurrentHandle.Goal);
-            m_ProcessingInstructions = true;
-            m_FadedOff = false;
-        }
+            //FadeOnInstructionalUI(m_CurrentHandle.InstructionalUI);
+            //m_GoalReached = GetGoal(m_CurrentHandle.Goal);
+            //m_ProcessingInstructions = true;
+            //m_FadedOff = false;
+        //}
 
-        if (m_ProcessingInstructions)
-        {
+        //if (m_ProcessingInstructions)
+        //{
             // start listening for goal reached
-            if (m_GoalReached.Invoke())
-            {
+            //if (m_GoalReached.Invoke())
+            //{
                 // if goal reached, fade off
-                if (!m_FadedOff)
-                {
-                    m_FadedOff = true;
-                    m_AnimationManager.FadeOffCurrentUI();
-                }
-            }
-        }
+                //if (!m_FadedOff)
+                //{
+                    //m_FadedOff = true;
+                    //m_AnimationManager.FadeOffCurrentUI();
+                //}
+            //}
+        //}
     }
 
     void GetManagers()

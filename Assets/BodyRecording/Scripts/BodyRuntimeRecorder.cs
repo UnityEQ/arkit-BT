@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.XR.ARFoundation;
 
 public class BodyRuntimeRecorder : MonoBehaviour
 {
+	public GameObject recordingBtn;
     bool m_IsRecording = false;
-
+	
     List<Vector3> m_JointPositions;
 
     public List<Vector3> JointPositions
@@ -37,7 +39,8 @@ public class BodyRuntimeRecorder : MonoBehaviour
 
     JointHandler m_ActiveTrackedBodyJoints;
     const int k_TrackedBodyJointCount = 92; // 91 + root parent
-
+#if UNITY_EDITOR
+#elif UNITY_IOS
     void OnEnable()
     {
         m_HumanBodyManager.humanBodiesChanged += HumanBodyManagerOnhumanBodiesChanged;
@@ -47,7 +50,7 @@ public class BodyRuntimeRecorder : MonoBehaviour
     {
         m_HumanBodyManager.humanBodiesChanged -= HumanBodyManagerOnhumanBodiesChanged;
     }
-
+#endif
     void HumanBodyManagerOnhumanBodiesChanged(ARHumanBodiesChangedEventArgs bodyChangeEventArgs)
     {
         if (bodyChangeEventArgs.added.Count > 0)
@@ -107,11 +110,20 @@ public class BodyRuntimeRecorder : MonoBehaviour
                 dataRecorded();
             }
         }
+		if(m_IsRecording)
+		{
+			recordingBtn.GetComponent<Image>().color = new Color32(255,0,0,255);
+		}
+		else
+		{
+			recordingBtn.GetComponent<Image>().color = new Color32(255,255,255,255);
+		}
     }
 
     public void ForceStopRecording()
     {
         m_IsRecording = false;
+		recordingBtn.GetComponent<Image>().color = new Color32(255,255,255,255);
     }
 }
 

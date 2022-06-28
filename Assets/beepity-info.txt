@@ -1,0 +1,28 @@
+beepity.php: Upload Animations
+
+<?php
+        if(isset($_POST['name']) && isset($_POST['data'])){
+                file_put_contents($_POST['name'].".txt", $_POST['data']);
+                echo "uploaded.";
+        }else{
+                echo "invalid file uploaded.";
+        }
+?>
+
+
+beepity2.php: Get Anim List
+
+
+<?php
+header('Content-type: text/plain');
+if ($handle = opendir('.')) {
+    while (false !== ($file = readdir($handle)))
+    {
+        if ($file != "." && $file != ".." && strtolower(substr($file, strrpos($$
+        {
+            echo "$file\n";
+        }
+    }
+    closedir($handle);
+}
+?>
